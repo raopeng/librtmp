@@ -1,4 +1,4 @@
-.PHONY: default _default install install-api help clean server srs_ingest_hls librtmp utest _prepare_dir 
+.PHONY: default _default install install-api help clean server srs_ingest_hls librtmp utest _prepare_dir bench
 
 # install prefix.
 SRS_PREFIX=/usr/local/srs
@@ -7,7 +7,7 @@ __REAL_INSTALL=$(DESTDIR)$(SRS_PREFIX)
 default:
 	$(MAKE) _default
 
-_default: server srs_ingest_hls librtmp utest 
+_default: server srs_ingest_hls librtmp utest bench
 	@bash objs/_srs_build_summary.sh
 
 help:
@@ -55,6 +55,11 @@ librtmp: server
 
 utest: server
 	@echo "utest is disabled, ignore"
+
+bench:
+	@echo "for bench"
+	@mkdir -p bench/objs
+	(cd bench/objs;cmake ..;make)
 
 # the ./configure will generate it.
 _prepare_dir:

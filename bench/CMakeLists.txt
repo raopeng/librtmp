@@ -6,7 +6,6 @@ LINK_DIRECTORIES($ENV{PWD}/../../objs/lib)
 INCLUDE_DIRECTORIES(/home/zhiguangq/workspace/librtp/sample/rtpCapture/3rd-party/include)
 LINK_DIRECTORIES(/home/zhiguangq/workspace/librtp/sample/rtpCapture/3rd-party/lib)
 
-#ADD_EXECUTABLE(demo PullEngine.cpp PushEngine.cpp JobCenter.cpp JobQueue.cpp JobProducer.cpp JobConsumer.cpp main.cpp)
 ADD_EXECUTABLE(demo PullEngine.cpp PushEngine.cpp JobCenter.cpp JobQueue.cpp main.cpp)
 TARGET_LINK_LIBRARIES(demo rt)
 TARGET_LINK_LIBRARIES(demo pthread)
