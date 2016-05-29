@@ -3,31 +3,71 @@
 
 #include <list>
 #include <string>
+#include <iostream>
 #include "srs_librtmp.h"
+#include "Poco/SharedPtr.h"
 #include "Poco/Mutex.h"
 
+class BaseTask;
 class OneStream
 {
 public:
-    OneStream();
-    OneStream* clone(OneStream* stream);
-    OneStream* reset();
-    int         id;
-    int         receiveSize;
-    int64_t     survivalTime;
-    int64_t     beginTime;
-    int64_t     afterPlayTime;
-    int64_t     lastDataTime;
-    int64_t     endTime;
+    enum STREAM_TYPE{PUSH = 0, PULL};
+    
+    OneStream(STREAM_TYPE type, int duration, std::string ipPort, std::string prefixName, int suffixName, BaseTask* task);  
+    ~OneStream();
+    
+    int getID(void);
+    STREAM_TYPE getType(void);
+    void addReceiveSize(int size);
+    int getReceiveSize(void);
+    int64_t getExpiredTime(void);
+    void setExpiredTime(int64_t currentTime);
+    void setRemoteIPPort(char* ip, int port);
+    void setLocalIPPort(std::string ipPort);
+    std::string getLocalIPPort(void);
+    std::string getURL(void);
+    
+    BaseTask    *m_task;            // 这个流的任务对象指针，为了回调时指定对象
+private:
+    int         m_id;               // 这个流的唯一ID号
+    int         m_receiveSize;      // 产生流量
+    STREAM_TYPE m_type;             // 推流、或者拉流
+    int         m_duration;         // 持续时间
+    std::string m_remoteIPPort;     // 服务器IP和端口
+    std::string m_localIPPort;      // 本地使用的IP和端口
+    std::string m_prefixName;       // 流名字前缀
+    int         m_suffixName;       // 流名字后缀
+
+    int64_t     m_expiredTime;      // 流失效时间
+    //bool        isRedirect;
+private:
+    friend class PushEngine;
+    friend class PullEngine;
     srs_rtmp_t  rtmp;
-    std::string ipPort;
-    std::string prefixName;
-    std::string localIPPort;
-    int         randNum;
-    int64_t     baseTimestamp;
-    int         sendIndex;
-    bool        isRedirect;
-    static  int Count;
+    int         m_sendIndex;        // 推流用到
+    int64_t     m_baseTimestamp;    // 推流用到
+    static  int m_count;            // 类的静态变量，指定流ID号唯一
+};
+
+typedef Poco::SharedPtr<OneStream>  OneStreamSharePtr;
+
+enum EVENT_TYPE{HANDSHAKE_FAIL = 0, CONNECT_FAIL, PUBLIC_FAIL, PUSH_STREAM_FAIL, PLAY_STREAM_FAIL, EPOLL_FAIL, CLOSE_BY_PEER, START_TCP, START_STREAM, END_STREAM};
+const std::string eventSring[] = {"handshake_fail","connect_fail", "public_fail", "push_stream_fail", "play_stream_fail","epoll_fail", "close_by_peer", "start_tcp", "start_stream", "end_stream"};
+class StreamEvent{
+public:
+    StreamEvent(OneStreamSharePtr id, int64_t time, EVENT_TYPE type){m_oneStream = id; m_eventTime = time; m_eventType = type; /*std::cout << "StreamEvent ctor." << std::endl;*/}
+    ~StreamEvent(){/*std::cout << "StreamEvent dtor." << std::endl;*/}
+    OneStreamSharePtr   m_oneStream;
+    int64_t             m_eventTime;
+    EVENT_TYPE          m_eventType;
+};
+
+typedef Poco::SharedPtr<StreamEvent>  StreamEventSharePtr;
+
+class BaseTask{
+public:
+    virtual void onEvent(StreamEventSharePtr e) = 0;
 };
 
 template <class T> class JobQueue
