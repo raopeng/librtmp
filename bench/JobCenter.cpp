@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 
 #include "Poco/DateTime.h"
 #include "Poco/DateTimeFormatter.h"

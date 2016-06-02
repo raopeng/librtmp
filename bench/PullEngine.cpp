@@ -5,6 +5,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <unistd.h>
+#include <stdio.h>
 #include <iostream>
 
 std::string PullEngine::srs_get_local_ip_port(srs_rtmp_t rtmp)

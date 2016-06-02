@@ -1,5 +1,6 @@
 #include "PushEngine.h"
 #include <sys/epoll.h>
+#include <unistd.h>
 #include <iostream>
 
 PushEngine::PushEngine(JobQueue<OneStreamSharePtr> &jobQueue, JobQueue<StreamEventSharePtr> &streamEventQueue)

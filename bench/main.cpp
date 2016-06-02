@@ -3,6 +3,7 @@
 #include <list>
 #include <map>
 #include <string>
+#include <unistd.h>
 #include <iostream>
 #include "srs_librtmp.h"
 #include "JobCenter.h"

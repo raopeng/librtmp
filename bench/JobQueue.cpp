@@ -1,4 +1,5 @@
 #include "JobQueue.h"
+#include <stdio.h>
 
 int OneStream::m_count = 1;
 OneStream::OneStream(STREAM_TYPE type, int duration, std::string ipPort, std::string prefixName, int suffixName, BaseTask* task)
