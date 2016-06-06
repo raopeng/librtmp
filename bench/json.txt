@@ -1,0 +1,12 @@
+{
+"publish":{
+        "ip_port":["127.0.0.1:11935"],
+        "duration":1000,
+        "amount":1 
+    },
+"play":{
+        "ip_port":["127.0.0.1:11935"],
+        "duration":1000,
+        "amount": 2000
+    }
+}
